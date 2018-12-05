@@ -265,6 +265,10 @@ class SortImports(object):
             else:
                 prefix = "C"
         module_name = module_name.lower()
+
+        relative_levels, base_module_name = re.match('(\.*)(.*)', module_name).groups()
+        if relative_levels:
+            module_name = '.' + str(len(relative_levels)) + base_module_name
         return "{0}{1}{2}".format(module_name in config['force_to_top'] and "A" or "B", prefix,
                                   config['length_sort'] and (str(len(module_name)) + ":" + module_name) or module_name)
 
@@ -525,6 +529,11 @@ class SortImports(object):
                     section = 'B'
                     if line.startswith('#'):
                         return 'AA'
+
+                    rel_imports, rest = re.match('(\.*)(.*)', '...bla').groups()
+                    if rel_imports:
+                        rel_imports = '.' + str(len(rel_imports))
+                    line = rel_imports + rest
 
                     line = re.sub('^from ', '', line)
                     line = re.sub('^import ', '', line)
